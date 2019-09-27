@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Intergrated Payments</title>
+    <link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Make Donations here</h1>
+        <small>Click on the buttons below to make donations</small>
+        <hr>
+        <div class="form-group">
+            <label>Name:</label>
+            <input type="text" id="pno" class="form-control" placeholder="Your name here">
+            <label>E-mail</label>
+            <input type="e-mail" id="email" class="form-control" placeholder="Email address here">
+        </div>
+        <a class="btn btn-warning" onClick="payWithRave()">Pay with Rave</a> <a href="http://paystack.com/pay/momoh" class="btn btn-primary">Pay with PayStack</a>
+    </div>
+
+    <script src="https://api.ravepay.co/flwv3-pug/getpaidx/api/flwpbf-inline.js"></script>
+    <script>
+        const API_publicKey = "FLWPUBK-cba53ee1341aba1ec03fcee26568ae0d-X";
+    
+        function payWithRave() {
+            var x = getpaidSetup({
+                PBFPubKey: API_publicKey,
+                customer_email: document.getElementById('email').value,
+                amount: 100,
+                customer_phone: '',
+                currency: "NGN",
+                txref: "rave-123456",
+                meta: [{
+                    metaname: "flightID",
+                    metavalue: "AP1234"
+                }],
+                onclose: function() {},
+                callback: function(response) {
+                    var txref = response.tx.txRef; // collect txRef returned and pass to a 					server page to complete status check.
+                    console.log("This is the response returned after a charge", response);
+                    if (
+                        response.tx.chargeResponseCode == "00" ||
+                        response.tx.chargeResponseCode == "0"
+                    ) {
+                        window.location.href = "success.html";
+                    } else {
+                        window.location.href = "fail.html";
+                    }
+    
+                    x.close(); // use this to close the modal immediately after payment.
+                }
+            });
+        }
+    </script>
+</body>
+</html>
